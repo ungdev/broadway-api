@@ -17,7 +17,7 @@ export default (permission: string) => async (req: Request, res: Response, next:
         return next();
       }
 
-      if (decoded.permissions === permission || decoded.permissions === Permission.ADMIN) {
+      if (decoded.permission === permission || decoded.permission === Permission.Admin) {
         return next();
       }
       return unauthorized(res);

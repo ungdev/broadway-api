@@ -1,14 +1,19 @@
 import { Request } from 'express';
-import Item from './models/item';
 /**
  * DISCLAMER: Dans mode développement, la modification de ce fichier ne sera peut-être pas prise en compte par le serveur de dev
  * Redémarrer le serveur dans ce cas là
  */
 // General
 
+export enum Permission {
+  Admin = 'admin',
+  Orga = 'orga',
+}
+
 export interface Token {
   name: string;
   key: string;
+  permission: Permission;
 }
 
 export enum Representation {

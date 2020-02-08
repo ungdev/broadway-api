@@ -5,12 +5,17 @@ declare module '@ung/node-etupay' {
     key: string;
   }
 
-  export default function initialize(initializer: Initializer): string;
-
-  export class Basket {
+  class Basket {
     constructor(title: string, firstname: string, lastname: string, email: string, type: string, data: string);
 
     addItem(name: string, price: number, quantity: number): void;
+
     compute(): string;
   }
+
+  interface InitializerReturn {
+    Basket: typeof Basket;
+  }
+
+  export default function initialize(initializer: Initializer): InitializerReturn;
 }

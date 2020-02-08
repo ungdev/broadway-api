@@ -1,15 +1,17 @@
 import { Response } from 'express';
-import { check, body } from 'express-validator';
-import { Basket } from '@ung/node-etupay';
-import { unauthorized, success, badRequest } from '../../utils/responses';
+import { check } from 'express-validator';
+import etupay from '../../utils/etupay';
+import { success } from '../../utils/responses';
 import errorHandler from '../../utils/errorHandler';
-import { BodyRequest, Representation, Error } from '../../types';
+import { BodyRequest, Representation } from '../../types';
 import Order from '../../models/order';
-import { isFull } from '../../utils/users';
+import { checkUsersLength, checkIfFull } from '../../utils/users';
 import { deleteExpiredOrders } from '../../utils/orders';
 import removeAccents from '../../utils/removeAccents';
 import validateBody from '../../middlewares/validateBody';
-import log from '../../utils/log';
+import User from '../../models/user';
+import { getAllItems, checkItemIdAvailibility } from '../../utils/items';
+import { integer } from '../../utils/validators';
 
 export const createValidation = [
   check('firstname').isAlpha(),
@@ -19,39 +21,41 @@ export const createValidation = [
   check('users').isArray(),
   check('users.*.firstname').isAlpha(),
   check('users.*.lastname').isAlpha(),
-  check('users.*.itemId').isInt(),
+  check('users.*.itemId').custom(integer),
   validateBody(),
 ];
 
 const create = async (req: BodyRequest<Order>, res: Response) => {
   try {
-    if (req.body.users.length === 0) {
-      log.warn('Invalid form: users length is 0');
-      return badRequest(res, Error.INVALID_FORM);
-    }
+    const items = await getAllItems();
 
-    if (await isFull(req.body.representation, req.body.users.length)) {
-      return unauthorized(res, Error.REPRESENTATION_FULL);
-    }
+    checkUsersLength(req, res);
+    checkItemIdAvailibility(req, res, items);
+    await checkIfFull(req, res, req.body.representation, req.body.users.length);
 
     await deleteExpiredOrders();
 
-    const order = await Order.create({
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
-      email: req.body.email,
-      representation: req.body.representation,
-      users: req.body.users.map((user) => ({
-        firstname: user.firstname,
-        lastname: user.lastname,
-        itemId: user.itemId,
-      })),
-    });
+    const order = await Order.create(
+      {
+        firstname: req.body.firstname,
+        lastname: req.body.lastname,
+        email: req.body.email,
+        representation: req.body.representation,
+        users: req.body.users.map((user) => ({
+          firstname: user.firstname,
+          lastname: user.lastname,
+          itemId: user.itemId,
+        })),
+      },
+      {
+        include: [User],
+      },
+    );
 
     const data = JSON.stringify({ orderId: order.id });
     const encoded = Buffer.from(data).toString('base64');
 
-    const basket = new Basket(
+    const basket = new (etupay()).Basket(
       'Broadway UTT',
       removeAccents(order.firstname),
       removeAccents(order.lastname),
@@ -60,9 +64,10 @@ const create = async (req: BodyRequest<Order>, res: Response) => {
       encoded,
     );
 
-    order.users.forEach((user) =>
-      basket.addItem(`${user.firstname} ${user.lastname} - ${user.item.title}`, user.item.price, 1),
-    );
+    order.users.forEach((user) => {
+      const item = items.find((item) => item.id === user.itemId);
+      basket.addItem(`${user.firstname} ${user.lastname} - ${item.name}`, item.price, 1);
+    });
 
     return success(res, { url: basket.compute() });
   } catch (err) {

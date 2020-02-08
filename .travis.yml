@@ -1,24 +1,35 @@
 language: node_js
+
+node_js:
+  - 'lts/*'
+
 branches:
   only:
     - master
     - dev
-node_js:
-  - stable
-cache:
-  directories:
-    - node_modules
+
+cache: yarn
+
 script:
   - yarn
   - yarn lint
-  - yarn build
+
 notifications:
   slack: uttnetgroup:dub9msi1fvNcpb1M5Wnmpuxo
+
 deploy:
   - provider: openshift
     server: $OPENSHIFT_SERVER
-    project: ua
-    app: api-bouffe
+    project: broadway
+    app: api-dev
+    token: $OPENSHIFT_TOKEN
+    on:
+      branch: dev
+    edge: true
+  - provider: openshift
+    server: $OPENSHIFT_SERVER
+    project: broadway
+    app: api-prod
     token: $OPENSHIFT_TOKEN
     on:
       branch: master

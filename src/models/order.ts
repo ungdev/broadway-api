@@ -20,6 +20,7 @@ import User from './user';
 })
 export default class Order extends Model<Order> {
   @PrimaryKey
+  @Unique
   @Column
   id: string;
 
@@ -44,7 +45,6 @@ export default class Order extends Model<Order> {
   public paidAt: string;
 
   @AllowNull(false)
-  @Unique
   @Column
   public email: string;
 
@@ -53,7 +53,9 @@ export default class Order extends Model<Order> {
 
   @BeforeCreate
   static addId(instance: Order) {
-    // eslint-disable-next-line no-param-reassign
-    instance.id = shortid.generate();
+    if (!instance.id) {
+      // eslint-disable-next-line no-param-reassign
+      instance.id = shortid.generate();
+    }
   }
 }

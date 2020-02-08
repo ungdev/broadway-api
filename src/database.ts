@@ -6,8 +6,6 @@ import { devEnv } from './utils/env';
 export default async (_forceSync = false) => {
   let sequelize: Sequelize;
 
-  console.log('lol');
-
   try {
     sequelize = new Sequelize({
       database: process.env.DB_NAME,
