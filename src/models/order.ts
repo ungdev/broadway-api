@@ -1,26 +1,31 @@
-import shortid from 'shortid';
 import {
   Table,
   Column,
   Model,
   AllowNull,
+  Unique,
   PrimaryKey,
-  Default,
-  ForeignKey,
-  BelongsTo,
+  HasMany,
   BeforeCreate,
+  Default,
+  DataType,
 } from 'sequelize-typescript';
-import Order from './order';
-import Item from './item';
+import shortid from 'shortid';
+import { Representation } from '../types';
+import User from './user';
 
 @Table({
-  tableName: 'users',
+  tableName: 'orders',
   paranoid: true,
 })
-export default class User extends Model<User> {
+export default class Order extends Model<Order> {
   @PrimaryKey
   @Column
   id: string;
+
+  @AllowNull(false)
+  @Column(DataType.ENUM('friday', 'saturday'))
+  public representation: Representation;
 
   @AllowNull(false)
   @Column
@@ -31,25 +36,20 @@ export default class User extends Model<User> {
   public lastname: string;
 
   @AllowNull(false)
-  @Default(false)
+  @Default('draft')
   @Column
-  public isScanned: false;
+  public transactionState: string;
+
+  @Column
+  public paidAt: string;
 
   @AllowNull(false)
-  @ForeignKey(() => Order)
+  @Unique
   @Column
-  public orderId: string;
+  public email: string;
 
-  @BelongsTo(() => Order)
-  public order: Order;
-
-  @AllowNull(false)
-  @ForeignKey(() => Item)
-  @Column
-  public itemId: number;
-
-  @BelongsTo(() => Item)
-  public item: Item;
+  @HasMany(() => User)
+  public users: User[];
 
   @BeforeCreate
   static addId(instance: Order) {

@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import login from './login';
+import list from './list';
 
 export default () => {
   const router = Router();
 
-  router.post('/login', login());
+  router.get('/', list);
 
   return router;
 };

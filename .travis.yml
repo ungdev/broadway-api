@@ -13,7 +13,7 @@ script:
   - yarn lint
   - yarn build
 notifications:
-  slack: uttnetgroup:wIIt6boEZlbKTo6dxPCpm8Ke
+  slack: uttnetgroup:dub9msi1fvNcpb1M5Wnmpuxo
 deploy:
   - provider: openshift
     server: $OPENSHIFT_SERVER

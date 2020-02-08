@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import Item from './models/item';
 /**
  * DISCLAMER: Dans mode développement, la modification de ce fichier ne sera peut-être pas prise en compte par le serveur de dev
  * Redémarrer le serveur dans ce cas là
@@ -11,8 +12,8 @@ export interface Token {
 }
 
 export enum Representation {
-  Friday,
-  Saturday,
+  Friday = 'friday',
+  Saturday = 'saturday',
 }
 
 export enum Error {
@@ -24,9 +25,11 @@ export enum Error {
   EXPIRED_TOKEN = 'EXPIRED_TOKEN',
   INVALID_TOKEN = 'INVALID_TOKEN',
   INVALID_PIN = 'INVALID_PIN',
+  INVALID_FORM = 'Formulaire invalide',
 
   // 403
   UNAUTHORIZED = 'UNAUTHORIZED',
+  REPRESENTATION_FULL = 'La représentation sélectionnée est complète',
 
   // 404
   NOT_FOUND = 'NOT_FOUND',

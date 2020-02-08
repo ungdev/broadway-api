@@ -2,13 +2,13 @@ import { Table, Column, Model, AllowNull, Unique, HasOne } from 'sequelize-types
 import User from './user';
 
 @Table({
-  tableName: 'tickettypes',
+  tableName: 'items',
 })
-export default class TicketType extends Model<TicketType> {
+export default class Item extends Model<Item> {
   @AllowNull(false)
   @Unique
   @Column
-  public title: string;
+  public name: string;
 
   @AllowNull(false)
   @Column

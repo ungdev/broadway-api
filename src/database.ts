@@ -1,10 +1,12 @@
 import path from 'path';
 import { Sequelize } from 'sequelize-typescript';
 import log from './utils/log';
-import devEnv from './utils/devEnv';
+import { devEnv } from './utils/env';
 
 export default async (_forceSync = false) => {
   let sequelize: Sequelize;
+
+  console.log('lol');
 
   try {
     sequelize = new Sequelize({
@@ -18,6 +20,7 @@ export default async (_forceSync = false) => {
       logging: (sql: string) => log.info(sql),
     });
   } catch (err) {
+    log.error(err);
     process.exit(1);
   }
 

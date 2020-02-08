@@ -9,7 +9,8 @@
     "strict": true,
     "strictNullChecks": false,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "typeRoots": ["./src/utils", "./node_modules/@types"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

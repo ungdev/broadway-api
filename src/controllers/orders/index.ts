@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import login from './login';
+import create, { createValidation } from './create';
 
 export default () => {
   const router = Router();
 
-  router.post('/login', login());
+  router.post('/', createValidation, create);
 
   return router;
 };
