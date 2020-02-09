@@ -5,15 +5,13 @@ import { Request } from 'express';
  */
 // General
 
-export enum Permission {
+export enum Permissions {
   Admin = 'admin',
   Orga = 'orga',
 }
 
 export interface Token {
-  name: string;
-  key: string;
-  permission: Permission;
+  permissions: Permissions;
 }
 
 export enum Representation {
@@ -29,7 +27,7 @@ export enum Error {
   UNAUTHENTICATED = 'UNAUTHENTICATED',
   EXPIRED_TOKEN = 'EXPIRED_TOKEN',
   INVALID_TOKEN = 'INVALID_TOKEN',
-  INVALID_PIN = 'INVALID_PIN',
+  INVALID_PASSWORD = 'INVALID_PASSWORD',
   INVALID_FORM = 'Formulaire invalide',
 
   // 403
@@ -39,6 +37,9 @@ export enum Error {
   // 404
   NOT_FOUND = 'NOT_FOUND',
 
+  // 406
+  NOT_ACCEPTABLE = 'NOT_ACCEPTABLE',
+
   // 500
   UNKNOWN = 'UNKNOWN',
 }
@@ -46,7 +47,7 @@ export enum Error {
 // Express method merging
 declare module 'express' {
   interface Request {
-    user?: Token;
+    permissions?: Permissions;
   }
 }
 

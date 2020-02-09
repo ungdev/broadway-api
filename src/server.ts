@@ -11,6 +11,7 @@ import { notFound } from './utils/responses';
 import routes from './controllers';
 import log from './utils/log';
 import { devEnv } from './utils/env';
+import checkContent from './middlewares/checkContent';
 
 const app = express();
 const server = http.createServer(app);
@@ -22,16 +23,19 @@ config();
 
   app.use(morgan(devEnv() ? 'dev' : 'combined'));
 
-  morgan.token('username', (req) => (req.user ? req.user.key : 'anonymous'));
+  morgan.token('username', (req) => (req.permissions ? req.permissions : 'anonymous'));
   morgan.token('ip', (req) => req.header('x-forwarded-for') || req.connection.remoteAddress);
 
-  app.use(
-    morgan(':ip - :username - [:date[clf]] :method :status :url - :response-time ms', {
-      stream: fs.createWriteStream(`${process.env.APP_PATH_LOGS}/access.log`, { flags: 'a' }),
-      skip: (req) => req.method === 'OPTIONS' || req.method === 'GET',
-    }),
-  );
+  if (!devEnv()) {
+    app.use(
+      morgan(':ip - :username - [:date[clf]] :method :status :url - :response-time ms', {
+        stream: fs.createWriteStream(`${process.env.APP_PATH_LOGS}/access.log`, { flags: 'a' }),
+        skip: (req) => req.method === 'OPTIONS' || req.method === 'GET',
+      }),
+    );
+  }
 
+  app.use(checkContent());
   app.use(cors());
   app.use(helmet());
   app.use(bodyParser.json());

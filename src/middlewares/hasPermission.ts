@@ -1,23 +1,19 @@
 import { Response, NextFunction, Request } from 'express';
 import jwt from 'jsonwebtoken';
 import getToken from '../utils/getToken';
-import { Token, Permission } from '../types';
 import { unauthorized, unauthenticated } from '../utils/responses';
 import errorHandler from '../utils/errorHandler';
+import { Token, Permissions } from '../types';
 
-export default (permission: string) => async (req: Request, res: Response, next: NextFunction) => {
+export default (permission: Permissions) => async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = getToken(req);
     if (token) {
       const decoded = jwt.verify(token, process.env.APP_TOKEN_SECRET) as Token;
 
-      req.user = decoded;
+      req.permissions = decoded.permissions;
 
-      if (!permission) {
-        return next();
-      }
-
-      if (decoded.permission === permission || decoded.permission === Permission.Admin) {
+      if (decoded.permissions === permission || decoded.permissions === Permissions.Admin) {
         return next();
       }
       return unauthorized(res);

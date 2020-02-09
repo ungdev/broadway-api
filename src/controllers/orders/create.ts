@@ -25,6 +25,10 @@ export const createValidation = [
   validateBody(),
 ];
 
+/**
+ * Request body: { order(firstname, lastname, representation, email, users(firstname, lastname, ticketId) }
+ * Response { url }
+ */
 const create = async (req: BodyRequest<Order>, res: Response) => {
   try {
     const items = await getAllItems();
