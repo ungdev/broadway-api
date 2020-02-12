@@ -9,7 +9,7 @@ import { getAllItems } from '../../utils/items';
  */
 export default async (req: Request, res: Response) => {
   try {
-    const items = getAllItems();
+    const items = await getAllItems();
 
     return success(res, items);
   } catch (err) {
