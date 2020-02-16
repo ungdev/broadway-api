@@ -4,7 +4,7 @@ import { badRequest } from './responses';
 import log from './log';
 import { Error } from '../types';
 
-export const getAllItems = (raw = true) => {
+export const getAllItems = async (raw = true) => {
   return Item.findAll({
     attributes: ['id', 'name', 'description', 'price'],
     raw,

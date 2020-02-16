@@ -1,25 +1,24 @@
-import Items from '../src/models/item';
 import Item from '../src/models/item';
 
 const seedItems = () => {
   let items = [
     {
       id: 1,
-      name: 'Tarif BDE',
-      description: 'BLABLABLA',
-      price: 800,
+      name: 'Plein tarif',
+      description: '',
+      price: 1400,
     },
     {
       id: 2,
-      name: 'Tarif Réduit',
-      description: 'BLABLABLA',
-      price: 1100,
+      name: 'Tarif moins de 18 ans ou étudiant',
+      description: '',
+      price: 1000,
     },
     {
       id: 3,
-      name: 'Tarif Adulte',
-      description: 'BLABBLABLALA',
-      price: 1500,
+      name: 'Tarif moins de 12 ans ou cotisant BDE UTT',
+      description: '',
+      price: 800,
     },
   ];
 
