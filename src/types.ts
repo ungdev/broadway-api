@@ -24,7 +24,7 @@ export enum Error {
   BAD_REQUEST = 'Requête invalide',
 
   // 401
-  UNAUTHENTICATED = "Vous n'êtes pas autentifié",
+  UNAUTHENTICATED = "Vous n'êtes pas authentifié",
   EXPIRED_TOKEN = 'Session expirée',
   INVALID_TOKEN = 'Session invalide',
   INVALID_PASSWORD = 'Mot de passe invalide',

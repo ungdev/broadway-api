@@ -4,12 +4,10 @@ import errorHandler from '../../utils/errorHandler';
 import { successUrl } from '../../utils/env';
 import Order from '../../models/order';
 import User from '../../models/user';
+import { success } from '../../utils/responses';
 
 export const etupayCallback = (req: Request, res: Response) => {
-  res
-    .status(200)
-    .json({ message: 'ok' })
-    .end();
+  return success(res, { message: 'ok' });
 };
 
 /**
