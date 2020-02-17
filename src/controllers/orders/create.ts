@@ -14,13 +14,13 @@ import { getAllItems, checkItemIdAvailibility } from '../../utils/items';
 import { integer } from '../../utils/validators';
 
 export const createValidation = [
-  check('firstname').isAlpha(),
-  check('lastname').isAlpha(),
+  check('firstname').isString(),
+  check('lastname').isString(),
   check('email').isEmail(),
   check('representation').isNumeric(),
   check('users').isArray(),
-  check('users.*.firstname').isAlpha(),
-  check('users.*.lastname').isAlpha(),
+  check('users.*.firstname').isString(),
+  check('users.*.lastname').isString(),
   check('users.*.itemId').custom(integer),
   validateBody(),
 ];
@@ -70,7 +70,11 @@ const create = async (req: BodyRequest<Order>, res: Response) => {
 
     order.users.forEach((user) => {
       const item = items.find((item) => item.id === user.itemId);
-      basket.addItem(`${user.firstname} ${user.lastname} - ${item.name}`, item.price, 1);
+      basket.addItem(
+        `${removeAccents(user.firstname)} ${removeAccents(user.lastname)} - ${removeAccents(item.name)}`,
+        item.price,
+        1,
+      );
     });
 
     return success(res, { url: basket.compute() });
