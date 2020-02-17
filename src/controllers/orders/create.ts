@@ -5,12 +5,10 @@ import { success } from '../../utils/responses';
 import errorHandler from '../../utils/errorHandler';
 import { BodyRequest } from '../../types';
 import Order from '../../models/order';
-import { checkUsersLength, checkIfFull } from '../../utils/users';
-import { deleteExpiredOrders } from '../../utils/orders';
+import { createOrder } from '../../utils/orders';
 import removeAccents from '../../utils/removeAccents';
 import validateBody from '../../middlewares/validateBody';
-import User from '../../models/user';
-import { getAllItems, checkItemIdAvailibility } from '../../utils/items';
+import { getAllItems } from '../../utils/items';
 import { integer } from '../../utils/validators';
 
 export const createValidation = [
@@ -32,29 +30,7 @@ export const createValidation = [
 const create = async (req: BodyRequest<Order>, res: Response) => {
   try {
     const items = await getAllItems();
-
-    checkUsersLength(req, res);
-    checkItemIdAvailibility(req, res, items);
-    await checkIfFull(req, res, req.body.representation, req.body.users.length);
-
-    await deleteExpiredOrders();
-
-    const order = await Order.create(
-      {
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        email: req.body.email,
-        representation: req.body.representation,
-        users: req.body.users.map((user) => ({
-          firstname: user.firstname,
-          lastname: user.lastname,
-          itemId: user.itemId,
-        })),
-      },
-      {
-        include: [User],
-      },
-    );
+    const order = await createOrder(req, res, items);
 
     const data = JSON.stringify({ orderId: order.id });
     const encoded = Buffer.from(data).toString('base64');

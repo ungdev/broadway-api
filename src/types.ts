@@ -19,10 +19,10 @@ export enum Error {
   BAD_REQUEST = 'BAD_REQUEST',
 
   // 401
-  UNAUTHENTICATED = 'UNAUTHENTICATED',
-  EXPIRED_TOKEN = 'EXPIRED_TOKEN',
-  INVALID_TOKEN = 'INVALID_TOKEN',
-  INVALID_PASSWORD = 'INVALID_PASSWORD',
+  UNAUTHENTICATED = "Vous n'êtes pas authentifié",
+  EXPIRED_TOKEN = 'Session expirée',
+  INVALID_TOKEN = 'Session invalide',
+  INVALID_PASSWORD = 'Mot de passe invalide',
   INVALID_FORM = 'Formulaire invalide',
 
   // 403
@@ -43,9 +43,17 @@ export enum Error {
 declare module 'express' {
   interface Request {
     permissions?: Permissions;
+    etupay?: EtupayResponse;
   }
 }
 
 export interface BodyRequest<T> extends Request {
   body: T;
+}
+
+export interface EtupayResponse {
+  transactionId: number;
+  step: string;
+  paid: boolean;
+  serviceData: string;
 }

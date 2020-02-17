@@ -4,12 +4,13 @@ import getToken from '../utils/getToken';
 import { unauthorized, unauthenticated } from '../utils/responses';
 import errorHandler from '../utils/errorHandler';
 import { Token, Permissions } from '../types';
+import { tokenSecret } from '../utils/env';
 
 export default (permission: Permissions) => async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = getToken(req);
     if (token) {
-      const decoded = jwt.verify(token, process.env.APP_TOKEN_SECRET) as Token;
+      const decoded = jwt.verify(token, tokenSecret()) as Token;
 
       req.permissions = decoded.permissions;
 

@@ -6,5 +6,5 @@ export const etupayKey = () => process.env.ETUPAY_KEY;
 export const etupayUrl = () => process.env.ETUPAY_URL;
 export const orgaPassword = () => process.env.APP_ORGA_PASSWORD;
 export const adminPassword = () => process.env.APP_ADMIN_PASSWORD;
-export const tokenSecret = () => process.env.APP_TOKEN_EXPIRES;
+export const tokenSecret = () => process.env.APP_TOKEN_SECRET;
 export const tokenExpires = () => process.env.APP_TOKEN_EXPIRES;

@@ -13,6 +13,7 @@ cache: yarn
 script:
   - yarn
   - yarn lint
+  - yarn build
 
 notifications:
   slack: uttnetgroup:dub9msi1fvNcpb1M5Wnmpuxo

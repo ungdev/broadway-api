@@ -43,6 +43,11 @@ export default class Order extends Model<Order> {
   public paidAt: string;
 
   @AllowNull(false)
+  @Default(false)
+  @Column
+  public forcePay: boolean;
+
+  @AllowNull(false)
   @Column
   public email: string;
 
