@@ -21,27 +21,27 @@ export enum Representation {
 
 export enum Error {
   // 400
-  BAD_REQUEST = 'Requête invalide',
+  BAD_REQUEST = 'BAD_REQUEST',
 
   // 401
-  UNAUTHENTICATED = "Vous n'êtes pas autentifié",
-  EXPIRED_TOKEN = 'Session expirée',
-  INVALID_TOKEN = 'Session invalide',
-  INVALID_PASSWORD = 'Mot de passe invalide',
+  UNAUTHENTICATED = 'UNAUTHENTICATED',
+  EXPIRED_TOKEN = 'EXPIRED_TOKEN',
+  INVALID_TOKEN = 'INVALID_TOKEN',
+  INVALID_PASSWORD = 'INVALID_PASSWORD',
   INVALID_FORM = 'Formulaire invalide',
 
   // 403
-  UNAUTHORIZED = "Vous n'avez pas l'autorisation d'accéder à cette ressource",
+  UNAUTHORIZED = 'UNAUTHORIZED',
   REPRESENTATION_FULL = 'La représentation sélectionnée est complète',
 
   // 404
-  NOT_FOUND = 'Ressource introuvable',
+  NOT_FOUND = 'NOT_FOUND',
 
   // 406
-  NOT_ACCEPTABLE = 'Contenu envoyé inacceptable',
+  NOT_ACCEPTABLE = 'NOT_ACCEPTABLE',
 
   // 500
-  UNKNOWN = 'Erreur inconnue',
+  UNKNOWN = 'UNKNOWN',
 }
 
 // Express method merging
@@ -53,15 +53,4 @@ declare module 'express' {
 
 export interface BodyRequest<T> extends Request {
   body: T;
-}
-
-export interface EtupayResponse {
-  transactionId: number;
-  step: string;
-  paid: boolean;
-  serviceData: string;
-}
-
-export interface EtupayRequest extends Request {
-  etupay: EtupayResponse;
 }
