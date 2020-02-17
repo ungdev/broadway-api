@@ -48,6 +48,7 @@ export enum Error {
 declare module 'express' {
   interface Request {
     permissions?: Permissions;
+    etupay?: EtupayResponse;
   }
 }
 
@@ -60,8 +61,4 @@ export interface EtupayResponse {
   step: string;
   paid: boolean;
   serviceData: string;
-}
-
-export interface EtupayRequest extends Request {
-  etupay: EtupayResponse;
 }

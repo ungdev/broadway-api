@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-
 declare module '@ung/node-etupay' {
+  import { Request, Response, NextFunction } from 'express';
+
   interface Initializer {
     id: number;
     url: string;
