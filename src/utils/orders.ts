@@ -1,18 +1,18 @@
 import { Op } from 'sequelize';
 import Order from '../models/order';
-import { expirationOrder } from './env';
+import { orderExpiration } from './env';
 
-// We suppose that the validation has already be donr
+// We suppose that the validation has already be done
 export const create = () => {};
 
 export const deleteExpiredOrders = async () => {
-  const date = new Date();
-  const dateBefore = new Date();
-  dateBefore.setMinutes(date.getMinutes() - expirationOrder());
+  const expirationDate = new Date();
+  expirationDate.setMinutes(expirationDate.getMinutes() - orderExpiration());
+
   await Order.destroy({
     where: {
       updatedAt: {
-        [Op.lt]: dateBefore,
+        [Op.lt]: expirationDate,
       },
       transactionState: 'draft',
     },
