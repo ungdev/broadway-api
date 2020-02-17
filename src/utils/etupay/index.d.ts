@@ -15,8 +15,11 @@ declare module '@ung/node-etupay' {
     compute(): string;
   }
 
+  export type EtupayMiddleware = (req: Request, res: Response, next: NextFunction) => void;
+
   interface InitializerReturn {
     Basket: typeof Basket;
+    middleware: EtupayMiddleware;
   }
 
   export default function initialize(initializer: Initializer): InitializerReturn;

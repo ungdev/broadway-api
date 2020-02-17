@@ -27,7 +27,7 @@ export const createValidation = [
  * Request body: { firstname, lastname, email, representation, users(firstname, lastname, ticketId) }
  * Response { url }
  */
-const create = async (req: BodyRequest<Order>, res: Response) => {
+const pay = async (req: BodyRequest<Order>, res: Response) => {
   try {
     const items = await getAllItems();
     const order = await createOrder(req, res, items);
@@ -59,4 +59,4 @@ const create = async (req: BodyRequest<Order>, res: Response) => {
   }
 };
 
-export default create;
+export default pay;

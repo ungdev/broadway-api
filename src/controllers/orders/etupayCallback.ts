@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { fn } from 'sequelize';
 import errorHandler from '../../utils/errorHandler';
 import { successUrl } from '../../utils/env';
-import { EtupayRequest } from '../../types';
 import Order from '../../models/order';
 import User from '../../models/user';
 
@@ -22,7 +21,7 @@ export const etupayCallback = (req: Request, res: Response) => {
  * TRANSACTION_ERROR
  */
 
-export const successfulPayment = async (req: EtupayRequest, res: Response) => {
+export const successfulPayment = async (req: Request, res: Response) => {
   try {
     if (!req.query.payload) {
       return res.redirect(`${successUrl()}&error=NO_PAYLOAD`);

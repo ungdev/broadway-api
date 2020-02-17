@@ -34,13 +34,17 @@ export default class Order extends Model<Order> {
   @Column
   public lastname: string;
 
+  @AllowNull(true)
+  @Column
+  public transactionId: number;
+
   @AllowNull(false)
   @Default('draft')
   @Column
   public transactionState: string;
 
   @Column
-  public paidAt: string;
+  public paidAt: Date;
 
   @AllowNull(false)
   @Default(false)

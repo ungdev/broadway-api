@@ -16,7 +16,7 @@ export interface Token {
 
 export enum Error {
   // 400
-  BAD_REQUEST = 'BAD_REQUEST',
+  BAD_REQUEST = 'Requête invalide',
 
   // 401
   UNAUTHENTICATED = "Vous n'êtes pas authentifié",
@@ -26,17 +26,17 @@ export enum Error {
   INVALID_FORM = 'Formulaire invalide',
 
   // 403
-  UNAUTHORIZED = 'UNAUTHORIZED',
+  UNAUTHORIZED = "Vous n'avez pas l'autorisation d'accéder à cette ressource",
   REPRESENTATION_FULL = 'La représentation sélectionnée est complète',
 
   // 404
-  NOT_FOUND = 'NOT_FOUND',
+  NOT_FOUND = 'Ressource introuvable',
 
   // 406
-  NOT_ACCEPTABLE = 'NOT_ACCEPTABLE',
+  NOT_ACCEPTABLE = 'Contenu envoyé inacceptable',
 
   // 500
-  UNKNOWN = 'UNKNOWN',
+  UNKNOWN = 'Erreur inconnue',
 }
 
 // Express method merging

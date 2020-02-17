@@ -14,5 +14,8 @@ export default () => {
   router.post('/', createValidation, pay);
   router.post('/forcePay', hasPermission(Permissions.Admin), createValidation, forcePay);
 
+  router.get('/return', etupay().middleware, successfulPayment);
+  router.post('/callback', etupayCallback);
+
   return router;
 };
