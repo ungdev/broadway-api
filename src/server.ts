@@ -1,11 +1,12 @@
 import express, { Request, Response } from 'express';
 import http from 'http';
 import fs from 'fs';
-import { config } from 'dotenv';
+import dotenv from 'dotenv';
 import morgan from 'morgan';
 import cors from 'cors';
 import helmet from 'helmet';
 import bodyParser from 'body-parser';
+
 import database from './database';
 import { notFound } from './utils/responses';
 import routes from './controllers';
@@ -16,7 +17,7 @@ import checkContent from './middlewares/checkContent';
 const app = express();
 const server = http.createServer(app);
 
-config();
+dotenv.config();
 
 (async () => {
   await database();
