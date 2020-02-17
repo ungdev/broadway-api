@@ -14,11 +14,6 @@ export interface Token {
   permissions: Permissions;
 }
 
-export enum Representation {
-  Friday = 'friday',
-  Saturday = 'saturday',
-}
-
 export enum Error {
   // 400
   BAD_REQUEST = 'BAD_REQUEST',

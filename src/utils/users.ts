@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import User from '../models/user';
 import { maxPlaces } from './env';
-import { Representation, Error } from '../types';
+import { Error } from '../types';
 import Order from '../models/order';
 import log from './log';
 import { badRequest, unauthorized } from './responses';
 
-export const checkIfFull = async (req: Request, res: Response, representation: Representation, places = 0) => {
+export const checkIfFull = async (req: Request, res: Response, representation: number, places = 0) => {
   const count = await User.count({
     include: [
       {

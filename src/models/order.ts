@@ -8,10 +8,8 @@ import {
   HasMany,
   BeforeCreate,
   Default,
-  DataType,
 } from 'sequelize-typescript';
 import shortid from 'shortid';
-import { Representation } from '../types';
 import User from './user';
 
 @Table({
@@ -25,8 +23,8 @@ export default class Order extends Model<Order> {
   id: string;
 
   @AllowNull(false)
-  @Column(DataType.ENUM('friday', 'saturday'))
-  public representation: Representation;
+  @Column
+  public representation: number;
 
   @AllowNull(false)
   @Column

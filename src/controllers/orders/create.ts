@@ -3,7 +3,7 @@ import { check } from 'express-validator';
 import etupay from '../../utils/etupay';
 import { success } from '../../utils/responses';
 import errorHandler from '../../utils/errorHandler';
-import { BodyRequest, Representation } from '../../types';
+import { BodyRequest } from '../../types';
 import Order from '../../models/order';
 import { checkUsersLength, checkIfFull } from '../../utils/users';
 import { deleteExpiredOrders } from '../../utils/orders';
@@ -17,7 +17,7 @@ export const createValidation = [
   check('firstname').isAlpha(),
   check('lastname').isAlpha(),
   check('email').isEmail(),
-  check('representation').isIn([Representation.Friday, Representation.Saturday]),
+  check('representation').isNumeric(),
   check('users').isArray(),
   check('users.*.firstname').isAlpha(),
   check('users.*.lastname').isAlpha(),
@@ -26,7 +26,7 @@ export const createValidation = [
 ];
 
 /**
- * Request body: { order(firstname, lastname, representation, email, users(firstname, lastname, ticketId) }
+ * Request body: { firstname, lastname, email, representation, users(firstname, lastname, ticketId) }
  * Response { url }
  */
 const create = async (req: BodyRequest<Order>, res: Response) => {
