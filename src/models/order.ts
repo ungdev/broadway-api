@@ -9,8 +9,8 @@ import {
   BeforeCreate,
   Default,
 } from 'sequelize-typescript';
-import shortid from 'shortid';
 import User from './user';
+import nanoid from '../utils/nanoid';
 
 @Table({
   tableName: 'orders',
@@ -59,10 +59,10 @@ export default class Order extends Model<Order> {
   public users: User[];
 
   @BeforeCreate
-  static addId(instance: Order) {
+  static async addId(instance: Order) {
     if (!instance.id) {
       // eslint-disable-next-line no-param-reassign
-      instance.id = shortid.generate();
+      instance.id = await nanoid();
     }
   }
 }
