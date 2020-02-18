@@ -33,7 +33,7 @@ export default class User extends Model<User> {
   @AllowNull(false)
   @Default(false)
   @Column
-  public isScanned: false;
+  public isScanned: boolean;
 
   @AllowNull(false)
   @ForeignKey(() => Order)

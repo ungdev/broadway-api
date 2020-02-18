@@ -10,6 +10,14 @@ import { orderExpiration } from './env';
 import { badRequest, unauthorized } from './responses';
 import log from './log';
 
+export const getOrder = async (id: string) => {
+  const order = await Order.findByPk(id, {
+    include: [User],
+  });
+
+  return order;
+};
+
 export const getAllOrders = async () => {
   const orders = await Order.findAll();
 
