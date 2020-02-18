@@ -17,6 +17,14 @@ export const getAllOrders = async () => {
   return orders;
 };
 
+export const getOrderWithUsers = async (id: string) => {
+  const order = await Order.findByPk(id, {
+    include: [User],
+  });
+
+  return order;
+};
+
 export const deleteExpiredOrders = async () => {
   const expirationDate = new Date();
   expirationDate.setMinutes(expirationDate.getMinutes() - orderExpiration());
