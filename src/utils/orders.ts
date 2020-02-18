@@ -8,9 +8,6 @@ import User from '../models/user';
 import Item from '../models/item';
 import { orderExpiration } from './env';
 
-// We suppose that the validation has already be done
-export const create = () => {};
-
 export const getAllOrders = async () => {
   const orders = await Order.findAll();
 
