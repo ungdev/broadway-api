@@ -33,6 +33,7 @@ export enum Error {
   // 404
   NOT_FOUND = 'La ressource est introuvable',
   USER_NOT_FOUND = "L'utilisateur est introuvable",
+  ORDER_NOT_FOUND = 'La commande est introuvable',
 
   // 406
   NOT_ACCEPTABLE = 'Contenu envoyé inacceptable',
