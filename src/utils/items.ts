@@ -1,8 +1,5 @@
-import { Request, Response } from 'express';
 import Item from '../models/item';
-import { badRequest } from './responses';
-import log from './log';
-import { Error } from '../types';
+import User from '../models/user';
 
 export const getAllItems = async (raw = true) => {
   return Item.findAll({
@@ -11,11 +8,10 @@ export const getAllItems = async (raw = true) => {
   });
 };
 
-export const checkItemIdAvailibility = (req: Request, res: Response, items: Array<Item>) => {
-  for (let i = 0; i < req.body.users.length; i += 1) {
-    if (!items.some((item) => item.id === req.body.users[i].itemId)) {
-      log.warn('Invalid form: bad itemId');
-      return badRequest(res, Error.INVALID_FORM);
+export const isItemIdValid = (users: Array<User>, items: Array<Item>) => {
+  for (let i = 0; i < users.length; i += 1) {
+    if (!items.some((item) => item.id === users[i].itemId)) {
+      return false;
     }
   }
 

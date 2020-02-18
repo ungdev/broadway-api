@@ -11,6 +11,11 @@ const forcePay = async (req: BodyRequest<Order>, res: Response) => {
     const items = await getAllItems();
     const order = await createOrder(req, res, items);
 
+    // Not need to return an answer to client, already done in createOrder()
+    if (!order) {
+      return false;
+    }
+
     return success(res, order);
   } catch (err) {
     return errorHandler(res, err);

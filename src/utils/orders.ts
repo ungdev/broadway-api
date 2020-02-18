@@ -1,15 +1,14 @@
 import { Response } from 'express';
 import { Op, fn } from 'sequelize';
 import Order from '../models/order';
-import { BodyRequest } from '../types';
-import { checkItemIdAvailibility } from './items';
-import { checkUsersLength, checkIfFull } from './users';
+import { BodyRequest, Error } from '../types';
+import { isItemIdValid } from './items';
+import { isFull } from './users';
 import User from '../models/user';
 import Item from '../models/item';
 import { orderExpiration } from './env';
-
-// We suppose that the validation has already be done
-export const create = () => {};
+import { badRequest, unauthorized } from './responses';
+import log from './log';
 
 export const getAllOrders = async () => {
   const orders = await Order.findAll();
@@ -32,9 +31,22 @@ export const deleteExpiredOrders = async () => {
 };
 
 export const createOrder = async (req: BodyRequest<Order>, res: Response, items: Array<Item>, forcePay = false) => {
-  checkUsersLength(req, res);
-  checkItemIdAvailibility(req, res, items);
-  await checkIfFull(req, res, req.body.representation, req.body.users.length);
+  if (req.body.users.length === 0) {
+    log.warn('Invalid form: users length is 0');
+    badRequest(res, Error.INVALID_FORM);
+    return false;
+  }
+
+  if (!isItemIdValid(req.body.users, items)) {
+    log.warn('Invalid form: bad itemId');
+    badRequest(res, Error.INVALID_FORM);
+    return false;
+  }
+
+  if (await isFull(req.body.representation, req.body.users.length)) {
+    unauthorized(res, Error.REPRESENTATION_FULL);
+    return false;
+  }
 
   await deleteExpiredOrders();
 

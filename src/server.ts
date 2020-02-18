@@ -1,7 +1,11 @@
+/* eslint-disable import/first */
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 import express, { Request, Response } from 'express';
 import http from 'http';
 import fs from 'fs';
-import dotenv from 'dotenv';
 import morgan from 'morgan';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -16,8 +20,6 @@ import checkContent from './middlewares/checkContent';
 
 const app = express();
 const server = http.createServer(app);
-
-dotenv.config();
 
 (async () => {
   await database();
