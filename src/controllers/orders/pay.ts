@@ -10,12 +10,13 @@ import removeAccents from '../../utils/removeAccents';
 import validateBody from '../../middlewares/validateBody';
 import { getAllItems } from '../../utils/items';
 import { integer } from '../../utils/validators';
+import { representationCount } from '../../utils/env';
 
 export const createValidation = [
   check('firstname').isString(),
   check('lastname').isString(),
   check('email').isEmail(),
-  check('representation').isNumeric(),
+  check('representation').isInt({ min: 0, max: representationCount() - 1 }),
   check('users').isArray(),
   check('users.*.firstname').isString(),
   check('users.*.lastname').isString(),
@@ -31,6 +32,11 @@ const pay = async (req: BodyRequest<Order>, res: Response) => {
   try {
     const items = await getAllItems();
     const order = await createOrder(req, res, items);
+
+    // Not need to return an answer to client, already done in createOrder()
+    if (!order) {
+      return false;
+    }
 
     const data = JSON.stringify({ orderId: order.id });
     const encoded = Buffer.from(data).toString('base64');

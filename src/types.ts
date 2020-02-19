@@ -28,11 +28,13 @@ export enum Error {
   // 403
   UNAUTHORIZED = "Vous n'avez pas l'autorisation d'accéder à cette ressource",
   REPRESENTATION_FULL = 'La représentation sélectionnée est complète',
+  USER_ALREADY_SCANNED = "L'utilisateur a déjà scanné son billet",
   NOT_PAID = "Le billet n'a pas été payé",
 
   // 404
-  NOT_FOUND = 'Ressource introuvable',
-  ORDER_NOT_FOUND = 'Le billet est introuvable',
+  NOT_FOUND = 'La ressource est introuvable',
+  USER_NOT_FOUND = "L'utilisateur est introuvable",
+  ORDER_NOT_FOUND = 'La commande est introuvable',
 
   // 406
   NOT_ACCEPTABLE = 'Contenu envoyé inacceptable',

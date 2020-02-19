@@ -1,7 +1,11 @@
+/* eslint-disable import/first */
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 import express, { Request, Response } from 'express';
 import http from 'http';
 import fs from 'fs';
-import dotenv from 'dotenv';
 import morgan from 'morgan';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -13,11 +17,10 @@ import routes from './controllers';
 import log from './utils/log';
 import { devEnv } from './utils/env';
 import checkContent from './middlewares/checkContent';
+import { checkJson } from './middlewares/checkJson';
 
 const app = express();
 const server = http.createServer(app);
-
-dotenv.config();
 
 (async () => {
   await database();
@@ -36,10 +39,11 @@ dotenv.config();
     );
   }
 
-  app.use(checkContent());
-  app.use(cors());
-  app.use(helmet());
-  app.use(bodyParser.json());
+  // Security middlewares
+  app.use(cors(), helmet());
+
+  // Body middlewares
+  app.use(checkContent(), bodyParser.json(), checkJson());
 
   app.use(routes());
 

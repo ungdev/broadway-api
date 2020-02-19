@@ -12,10 +12,10 @@ export default () => {
   const router = Router();
 
   router.get('/', hasPermission(Permissions.Admin), list);
-  router.post('/', createValidation, pay);
-  router.post('/forcePay', hasPermission(Permissions.Admin), createValidation, forcePay);
   router.get('/:id', hasPermission(Permissions.Orga), get);
 
+  router.post('/', createValidation, pay);
+  router.post('/forcePay', hasPermission(Permissions.Admin), createValidation, forcePay);
   router.get('/return', etupay().middleware, successfulPayment);
   router.post('/callback', etupayCallback);
 

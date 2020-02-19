@@ -1,4 +1,3 @@
-import shortid from 'shortid';
 import {
   Table,
   Column,
@@ -12,6 +11,7 @@ import {
 } from 'sequelize-typescript';
 import Order from './order';
 import Item from './item';
+import nanoid from '../utils/nanoid';
 
 @Table({
   tableName: 'users',
@@ -33,7 +33,7 @@ export default class User extends Model<User> {
   @AllowNull(false)
   @Default(false)
   @Column
-  public isScanned: false;
+  public isScanned: boolean;
 
   @AllowNull(false)
   @ForeignKey(() => Order)
@@ -52,8 +52,8 @@ export default class User extends Model<User> {
   public item: Item;
 
   @BeforeCreate
-  static addId(instance: Order) {
+  static async addId(instance: Order) {
     // eslint-disable-next-line no-param-reassign
-    instance.id = shortid.generate();
+    instance.id = await nanoid();
   }
 }
