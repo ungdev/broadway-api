@@ -20,7 +20,7 @@ const errorHandler = (res: Response, err: Error) => {
       log.error(err);
       return res
         .status(500)
-        .json({ error: 'UNKNOWN' })
+        .json({ error: ErrorType.UNKNOWN })
         .end();
   }
 };
