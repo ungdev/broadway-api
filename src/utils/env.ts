@@ -1,7 +1,7 @@
 export const devEnv = () => process.env.NODE_ENV === 'development';
 export const maxPlaces = () => parseInt(process.env.APP_MAX_PLACES);
 export const representationCount = () => parseInt(process.env.APP_REPRESENTATION_COUNT);
-export const orderExpiration = () => parseInt(process.env.APP_ORDER_EXPIRATE_IN);
+export const orderExpiration = () => parseInt(process.env.APP_ORDER_EXPIRATION);
 export const etupayId = () => parseInt(process.env.ETUPAY_ID);
 export const etupayKey = () => process.env.ETUPAY_KEY;
 export const etupayUrl = () => process.env.ETUPAY_URL;

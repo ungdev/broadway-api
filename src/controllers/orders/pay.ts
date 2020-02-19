@@ -41,7 +41,7 @@ const pay = async (req: BodyRequest<Order>, res: Response) => {
     const data = JSON.stringify({ orderId: order.id });
     const encoded = Buffer.from(data).toString('base64');
 
-    const basket = new (etupay()).Basket(
+    const basket = new (etupay().Basket)(
       'Broadway UTT',
       removeAccents(order.firstname),
       removeAccents(order.lastname),
