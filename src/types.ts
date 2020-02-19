@@ -30,6 +30,7 @@ export enum Error {
   REPRESENTATION_FULL = 'La représentation sélectionnée est complète',
   USER_ALREADY_SCANNED = "L'utilisateur a déjà scanné son billet",
   NOT_PAID = "Le billet n'a pas été payé",
+  PAYMENT_DISABLED = "L'achat de billets est désactivé",
 
   // 404
   NOT_FOUND = 'La ressource est introuvable',

@@ -1,16 +1,16 @@
 import { Response } from 'express';
 import { check } from 'express-validator';
 import etupay from '../../utils/etupay';
-import { success } from '../../utils/responses';
+import { success, unauthorized } from '../../utils/responses';
 import errorHandler from '../../utils/errorHandler';
-import { BodyRequest } from '../../types';
+import { BodyRequest, Error } from '../../types';
 import Order from '../../models/order';
 import { createOrder } from '../../utils/orders';
 import removeAccents from '../../utils/removeAccents';
 import validateBody from '../../middlewares/validateBody';
 import { getAllItems } from '../../utils/items';
 import { integer } from '../../utils/validators';
-import { representationCount } from '../../utils/env';
+import { representationCount, paymentEnabled } from '../../utils/env';
 
 export const createValidation = [
   check('firstname').isString(),
@@ -30,6 +30,10 @@ export const createValidation = [
  */
 const pay = async (req: BodyRequest<Order>, res: Response) => {
   try {
+    if (!paymentEnabled()) {
+      return unauthorized(res, Error.PAYMENT_DISABLED);
+    }
+
     const items = await getAllItems();
     const order = await createOrder(req, res, items);
 
