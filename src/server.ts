@@ -12,15 +12,13 @@ import helmet from 'helmet';
 import bodyParser from 'body-parser';
 
 import database from './database';
-import { notFound, success } from './utils/responses';
+import { notFound } from './utils/responses';
 import routes from './controllers';
 import log from './utils/log';
 import { devEnv } from './utils/env';
 import checkContent from './middlewares/checkContent';
 import { checkJson } from './middlewares/checkJson';
-import { generateQrCode, generateTicket } from './mail';
 
-import fs from 'fs';
 import { Error } from './types';
 
 const app = express();

@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import fs from 'fs';
 import { check } from 'express-validator';
 import etupay from '../../utils/etupay';
 import { success, unauthorized } from '../../utils/responses';
@@ -11,6 +12,8 @@ import validateBody from '../../middlewares/validateBody';
 import { getAllItems } from '../../utils/items';
 import { integer } from '../../utils/validators';
 import { representationCount, paymentEnabled } from '../../utils/env';
+import { generateTicket } from '../../mail';
+import Item from '../../models/item';
 
 export const createValidation = [
   check('firstname').isString(),
@@ -62,6 +65,16 @@ const pay = async (req: BodyRequest<Order>, res: Response) => {
         1,
       );
     });
+
+    // ***** TEST ***** //
+    const user1 = order.users[0];
+
+    user1.item = await Item.findByPk(user1.itemId);
+
+    const pdf = await generateTicket(user1, order.representation);
+
+    fs.writeFileSync('test.pdf', pdf);
+    // ***** END TEST ***** //
 
     return success(res, { url: basket.compute() });
   } catch (err) {
