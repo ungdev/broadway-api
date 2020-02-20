@@ -20,7 +20,7 @@ export enum Error {
 
   // 401
   UNAUTHENTICATED = "Vous n'êtes pas authentifié",
-  EXPIRED_TOKEN = 'Session expirée',
+  EXPIRED_TOKEN = 'Session expirée. Veuillez vous reconnecter',
   INVALID_TOKEN = 'Session invalide',
   INVALID_PASSWORD = 'Mot de passe invalide',
   INVALID_FORM = 'Formulaire invalide',
