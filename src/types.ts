@@ -34,6 +34,7 @@ export enum Error {
 
   // 404
   NOT_FOUND = 'La ressource est introuvable',
+  ROUTE_NOT_FOUND = 'La route est introuvable',
   USER_NOT_FOUND = "L'utilisateur est introuvable",
   ORDER_NOT_FOUND = 'La commande est introuvable',
 

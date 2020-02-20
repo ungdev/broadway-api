@@ -12,12 +12,16 @@ import helmet from 'helmet';
 import bodyParser from 'body-parser';
 
 import database from './database';
-import { notFound } from './utils/responses';
+import { notFound, success } from './utils/responses';
 import routes from './controllers';
 import log from './utils/log';
 import { devEnv } from './utils/env';
 import checkContent from './middlewares/checkContent';
 import { checkJson } from './middlewares/checkJson';
+import { generateQrCode, generateTicket } from './mail';
+
+import fs from 'fs';
+import { Error } from './types';
 
 const app = express();
 const server = http.createServer(app);
@@ -33,7 +37,7 @@ const server = http.createServer(app);
   if (!devEnv()) {
     app.use(
       morgan(':ip - :username - [:date[clf]] :method :status :url - :response-time ms', {
-        stream: fs.createWriteStream(`${process.env.APP_PATH_LOGS}/access.log`, { flags: 'a' }),
+        stream: fs.createWriteStream(`logs/access.log`, { flags: 'a' }),
         skip: (req) => req.method === 'OPTIONS' || req.method === 'GET',
       }),
     );
@@ -47,7 +51,7 @@ const server = http.createServer(app);
 
   app.use(routes());
 
-  app.use((req: Request, res: Response) => notFound(res));
+  app.use((req: Request, res: Response) => notFound(res, Error.ROUTE_NOT_FOUND));
 
   server.listen(process.env.APP_PORT, () => {
     log.info(`Node environment: ${process.env.NODE_ENV}`);
