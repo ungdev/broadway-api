@@ -9,7 +9,7 @@ import Order from '../../models/order';
 const forcePay = async (req: BodyRequest<Order>, res: Response) => {
   try {
     const items = await getAllItems();
-    const order = await createOrder(req, res, items);
+    const order = await createOrder(req, res, items, true);
 
     // Not need to return an answer to client, already done in createOrder()
     if (!order) {
