@@ -1,3 +1,8 @@
+export const dbHost = () => process.env.DB_HOST;
+export const dbPort = () => parseInt(process.env.DB_PORT);
+export const dbName = () => process.env.DB_NAME;
+export const dbUsername = () => process.env.DB_USERNAME;
+export const dbPassword = () => process.env.DB_PASSWORD;
 export const devEnv = () => process.env.NODE_ENV === 'development';
 export const maxPlaces = () => parseInt(process.env.APP_MAX_PLACES);
 export const representationCount = () => parseInt(process.env.APP_REPRESENTATION_COUNT);
