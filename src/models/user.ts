@@ -8,6 +8,7 @@ import {
   ForeignKey,
   BelongsTo,
   BeforeCreate,
+  DataType,
 } from 'sequelize-typescript';
 import Order from './order';
 import Item from './item';
@@ -29,6 +30,9 @@ export default class User extends Model<User> {
   @AllowNull(false)
   @Column
   public lastname: string;
+
+  @Column(DataType.ENUM('male', 'female', 'unknown'))
+  public gender: string;
 
   @AllowNull(false)
   @Default(false)

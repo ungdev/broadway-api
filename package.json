@@ -58,6 +58,7 @@
     "lint": "eslint src/ --ext .ts",
     "lint-fix": "eslint --fix src/ --ext .ts",
     "seed": "ts-node-dev --no-notify -T db/seed.ts",
-    "seed-force": "ts-node-dev --no-notify -T db/seed.ts --force-sync"
+    "seed-force": "ts-node-dev --no-notify -T db/seed.ts --force-sync",
+    "genderize": "ts-node-dev --no-notify -T src/utils/genderize.ts"
   }
 }
