@@ -50,4 +50,10 @@ const notAcceptable = (res: Response, type?: Error) =>
     .json({ error: type || Error.NOT_ACCEPTABLE })
     .end();
 
-export { success, created, noContent, badRequest, unauthenticated, unauthorized, notFound, notAcceptable };
+const unknown = (res: Response, type?: Error) =>
+  res
+    .status(500)
+    .json({ error: type || Error.UNKNOWN })
+    .end();
+
+export { success, created, noContent, badRequest, unauthenticated, unauthorized, notFound, notAcceptable, unknown };

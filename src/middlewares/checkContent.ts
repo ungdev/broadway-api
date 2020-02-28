@@ -6,5 +6,10 @@ export default () => (req: Request, res: Response, next: NextFunction) => {
     return next();
   }
 
+  // If etupay callback
+  if (req.method === 'GET' && req.path === '/etupay/return') {
+    return next();
+  }
+
   return notAcceptable(res);
 };
