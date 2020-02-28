@@ -15,5 +15,5 @@ export const adminPassword = () => process.env.APP_ADMIN_PASSWORD;
 export const tokenSecret = () => process.env.APP_TOKEN_SECRET;
 export const tokenExpires = () => process.env.APP_TOKEN_EXPIRES;
 export const successUrl = () => process.env.ETUPAY_SUCCESSURL;
-export const failureUrl = () => process.env.ETUPAY_ERRORURL;
+export const errorUrl = () => process.env.ETUPAY_ERRORURL;
 export const paymentEnabled = () => process.env.APP_PAYMENT_ENABLED === 'true';

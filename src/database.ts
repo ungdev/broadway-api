@@ -3,6 +3,11 @@ import { Sequelize } from 'sequelize-typescript';
 import log from './utils/log';
 import { devEnv, dbName, dbUsername, dbPassword, dbHost, dbPort } from './utils/env';
 
+const createViews = async (sequelize: Sequelize) => {
+  sequelize.query('CREATE OR REPLACE VIEW orders_not_deleted AS SELECT * FROM orders WHERE deletedAt IS NULL');
+  sequelize.query('CREATE OR REPLACE VIEW users_not_deleted AS SELECT * FROM users WHERE deletedAt IS NULL');
+};
+
 export default async (_forceSync = false) => {
   let sequelize: Sequelize;
 
@@ -43,6 +48,8 @@ export default async (_forceSync = false) => {
   }
 
   await sequelize.sync({ force: forceSync });
+  await createViews(sequelize);
+
   log.info('Connected to database');
 
   return { sequelize };

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { fn } from 'sequelize';
 import errorHandler from '../../utils/errorHandler';
-import { successUrl } from '../../utils/env';
+import { successUrl, errorUrl } from '../../utils/env';
 import Order from '../../models/order';
 import User from '../../models/user';
 
@@ -24,7 +24,7 @@ export const etupayCallback = (req: Request, res: Response) => {
 export const successfulPayment = async (req: Request, res: Response) => {
   try {
     if (!req.query.payload) {
-      return res.redirect(`${successUrl()}&error=NO_PAYLOAD`);
+      return res.redirect(`${errorUrl()}&error=NO_PAYLOAD`);
     }
 
     const { orderId } = JSON.parse(Buffer.from(req.etupay.serviceData, 'base64').toString());
@@ -38,7 +38,7 @@ export const successfulPayment = async (req: Request, res: Response) => {
     });
 
     if (!order) {
-      return res.redirect(`${successUrl()}&error=CART_NOT_FOUND`);
+      return res.redirect(`${errorUrl()}&error=CART_NOT_FOUND`);
     }
 
     order.transactionId = req.etupay.transactionId;
@@ -46,7 +46,7 @@ export const successfulPayment = async (req: Request, res: Response) => {
 
     if (order.transactionState !== 'paid') {
       await order.save();
-      return res.redirect(`${process.env.ARENA_ETUPAY_ERRORURL}&error=TRANSACTION_ERROR`);
+      return res.redirect(`${errorUrl()}&error=TRANSACTION_ERROR`);
     }
 
     order.paidAt = (fn('NOW') as unknown) as Date;
