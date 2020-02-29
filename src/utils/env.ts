@@ -17,3 +17,8 @@ export const tokenExpires = () => process.env.APP_TOKEN_EXPIRES;
 export const successUrl = () => process.env.ETUPAY_SUCCESSURL;
 export const errorUrl = () => process.env.ETUPAY_ERRORURL;
 export const paymentEnabled = () => process.env.APP_PAYMENT_ENABLED === 'true';
+export const mailUrl = () => process.env.MAIL_URL;
+export const mailPort = () => parseInt(process.env.MAIL_PORT);
+export const mailSender = () => process.env.MAIL_SENDER;
+export const mailUser = () => process.env.MAIL_USER;
+export const mailPassword = () => process.env.MAIL_PASSWORD;

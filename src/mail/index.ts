@@ -1,8 +1,17 @@
+/* eslint-disable @typescript-eslint/camelcase */
+
 import qrcode from 'qrcode';
+import { readFileSync } from 'fs';
+import nodemailer from 'nodemailer';
+import mustache from 'mustache';
+import { Attachment } from 'nodemailer/lib/mailer';
 import PDFDocument from 'pdfkit';
 import { join } from 'path';
 import User from '../models/user';
 import { identifyRepresentation } from '../utils/representation';
+import { mailUrl, mailSender, mailPort, mailPassword, mailUser } from '../utils/env';
+
+const template = readFileSync(join(__dirname, 'template.html')).toString();
 
 export const generateQrCode = async (id: string) => {
   return qrcode.toDataURL(id, { margin: 1 });
@@ -13,7 +22,7 @@ const width = 595.28;
 const height = 841.89;
 
 export const generateTicket = async (user: User, representation: number) =>
-  new Promise(async (resolve) => {
+  new Promise<Buffer>(async (resolve) => {
     const doc = new PDFDocument({ size: [width, height] });
     const qrcode = await generateQrCode(user.id);
     const buffers: Array<Uint8Array> = [];
@@ -36,3 +45,39 @@ export const generateTicket = async (user: User, representation: number) =>
 
     doc.end();
   });
+
+interface PaymentParams {
+  username: string;
+}
+
+const payment = (data: PaymentParams) => ({
+  title: 'Confirmation de votre commande - UTT Arena 2019',
+  data: mustache.render(template, {
+    title: 'PAIEMENT',
+    subtitle: `Félicitations ${data.username}, votre commande est confirmée !`,
+    content:
+      'Si vous avez acheté une place, elle est disponible en pièce jointe de ce mail ou dans l\'onglet "Mon compte" sur le site.<br />Vous pouvez accéder à votre commande en cliquant sur le bouton ci-dessous.',
+    button_title: 'A SUPPRIMER',
+  }),
+});
+
+export const sendMail = async (to: string, data: PaymentParams, attachments?: Array<Attachment>) => {
+  const transporter = nodemailer.createTransport({
+    host: mailUrl(),
+    port: mailPort(),
+    auth: {
+      user: mailUser(),
+      pass: mailPassword(),
+    },
+  });
+
+  const mailContent = payment(data);
+
+  return transporter.sendMail({
+    from: mailSender(),
+    to,
+    subject: mailContent.title,
+    html: mustache.render(mailContent.data, data),
+    attachments,
+  });
+};
