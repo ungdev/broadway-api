@@ -4,8 +4,12 @@ import log from './utils/log';
 import { devEnv, dbName, dbUsername, dbPassword, dbHost, dbPort } from './utils/env';
 
 const createViews = async (sequelize: Sequelize) => {
-  await sequelize.query('CREATE OR REPLACE VIEW orders_not_deleted AS SELECT * FROM orders WHERE deletedAt IS NULL');
-  await sequelize.query('CREATE OR REPLACE VIEW users_not_deleted AS SELECT * FROM users WHERE deletedAt IS NULL');
+  await sequelize.query(
+    'CREATE OR REPLACE VIEW orders_not_deleted AS SELECT * FROM orders WHERE deletedAt IS NULL ORDER BY createdAt',
+  );
+  await sequelize.query(
+    'CREATE OR REPLACE VIEW users_not_deleted AS SELECT * FROM users WHERE deletedAt IS NULL ORDER BY createdAt',
+  );
 };
 
 export default async (_forceSync = false) => {
