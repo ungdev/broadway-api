@@ -2,10 +2,8 @@ import { Request, Response } from 'express';
 import { fn } from 'sequelize';
 import errorHandler from '../../utils/errorHandler';
 import { successUrl, errorUrl } from '../../utils/env';
-import Order from '../../models/order';
-import User from '../../models/user';
-import Item from '../../models/item';
-import { generateTicket, sendMail } from '../../mail';
+import { sendConfirmationEmail } from '../../mail';
+import { getOrderWithUsersAndItems } from '../../utils/orders';
 
 export const etupayCallback = (req: Request, res: Response) => {
   res
@@ -14,33 +12,41 @@ export const etupayCallback = (req: Request, res: Response) => {
     .end();
 };
 
+const errorRedirect = (res: Response, error: string) => {
+  return res.redirect(`${errorUrl()}&error=${error}`);
+};
+
 /**
  * Possible redirections
  *
  * Error parameters:
  * NO_PAYLOAD
- * CART_NOT_FOUND
+ * NOT_FOUND
+ * ALREADY_PAID
+ * ALREADY_ERRORED
  * TRANSACTION_ERROR
  */
 
 export const successfulPayment = async (req: Request, res: Response) => {
   try {
     if (!req.query.payload) {
-      return res.redirect(`${errorUrl()}&error=NO_PAYLOAD`);
+      return errorRedirect(res, 'NO_PAYLOAD');
     }
 
     const { orderId } = JSON.parse(Buffer.from(req.etupay.serviceData, 'base64').toString());
 
-    const order = await Order.findOne({
-      where: {
-        id: orderId,
-        transactionState: 'draft',
-      },
-      include: [User],
-    });
+    const order = await getOrderWithUsersAndItems(orderId);
 
     if (!order) {
-      return res.redirect(`${errorUrl()}&error=CART_NOT_FOUND`);
+      return errorRedirect(res, 'NOT_FOUND');
+    }
+
+    if (order.transactionState === 'paid') {
+      return errorRedirect(res, 'ALREADY_PAID');
+    }
+
+    if (order.transactionState !== 'draft') {
+      return errorRedirect(res, 'ALREADY_ERRORED');
     }
 
     order.transactionId = req.etupay.transactionId;
@@ -56,21 +62,7 @@ export const successfulPayment = async (req: Request, res: Response) => {
 
     res.redirect(successUrl());
 
-    const attachements = await Promise.all(
-      order.users.map(async (_user) => {
-        const user = _user;
-        user.item = await Item.findByPk(user.itemId);
-
-        const pdf = await generateTicket(user, order.representation);
-
-        return {
-          filename: `${user.firstname}.pdf`,
-          content: pdf,
-        };
-      }),
-    );
-
-    await sendMail(order.email, { username: `${order.firstname} ${order.lastname}` }, attachements);
+    await sendConfirmationEmail(order);
 
     return res.end();
   } catch (err) {

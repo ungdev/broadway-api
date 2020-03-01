@@ -32,6 +32,36 @@ export const getOrderWithUsers = async (id: string) => {
   return order;
 };
 
+export const getOrderWithUsersAndItems = async (id: string) => {
+  const order = await Order.findByPk(id, {
+    include: [
+      {
+        model: User,
+        include: [Item],
+      },
+    ],
+  });
+
+  return order;
+};
+
+export const getPaidOrdersWithUsersAndItemsFromEmail = async (email: string) => {
+  const orders = await Order.findAll({
+    where: {
+      email,
+      transactionState: 'paid',
+    },
+    include: [
+      {
+        model: User,
+        include: [Item],
+      },
+    ],
+  });
+
+  return orders;
+};
+
 export const deleteExpiredOrders = async () => {
   const expirationDate = new Date();
   expirationDate.setMinutes(expirationDate.getMinutes() - orderExpiration());

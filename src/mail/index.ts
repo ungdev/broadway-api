@@ -4,12 +4,12 @@ import qrcode from 'qrcode';
 import { readFileSync } from 'fs';
 import nodemailer from 'nodemailer';
 import mustache from 'mustache';
-import { Attachment } from 'nodemailer/lib/mailer';
 import PDFDocument from 'pdfkit';
 import { join } from 'path';
 import User from '../models/user';
 import { identifyRepresentation } from '../utils/representation';
 import { mailUrl, mailSender, mailPort, mailPassword, mailUser } from '../utils/env';
+import Order from '../models/order';
 
 const template = readFileSync(join(__dirname, 'template.html')).toString();
 
@@ -46,22 +46,27 @@ export const generateTicket = async (user: User, representation: number) =>
     doc.end();
   });
 
-interface PaymentParams {
-  username: string;
-}
+const generateHtml = (firstname: string, lastname: string) =>
+  mustache.render(template, {
+    title: 'Confirmation de votre commande',
+    content: `Merci d'avoir commandé chez nous ${firstname} ${lastname}, blablablablablabla`,
+  });
 
-const payment = (data: PaymentParams) => ({
-  title: 'Confirmation de votre commande - UTT Arena 2019',
-  data: mustache.render(template, {
-    title: 'PAIEMENT',
-    subtitle: `Félicitations ${data.username}, votre commande est confirmée !`,
-    content:
-      'Si vous avez acheté une place, elle est disponible en pièce jointe de ce mail ou dans l\'onglet "Mon compte" sur le site.<br />Vous pouvez accéder à votre commande en cliquant sur le bouton ci-dessous.',
-    button_title: 'A SUPPRIMER',
-  }),
-});
+const generateAttachments = async (order: Order) =>
+  Promise.all(
+    order.users.map(async (_user) => {
+      const user = _user;
 
-export const sendMail = async (to: string, data: PaymentParams, attachments?: Array<Attachment>) => {
+      const pdf = await generateTicket(user, order.representation);
+
+      return {
+        filename: `${user.firstname}.pdf`,
+        content: pdf,
+      };
+    }),
+  );
+
+export const sendConfirmationEmail = async (order: Order) => {
   const transporter = nodemailer.createTransport({
     host: mailUrl(),
     port: mailPort(),
@@ -71,13 +76,14 @@ export const sendMail = async (to: string, data: PaymentParams, attachments?: Ar
     },
   });
 
-  const mailContent = payment(data);
+  const html = generateHtml(order.firstname, order.lastname);
+  const attachments = await generateAttachments(order);
 
   return transporter.sendMail({
     from: mailSender(),
-    to,
-    subject: mailContent.title,
-    html: mustache.render(mailContent.data, data),
+    to: order.email,
+    subject: 'Confirmation de votre commande',
+    html,
     attachments,
   });
 };
