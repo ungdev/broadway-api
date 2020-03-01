@@ -9,6 +9,7 @@ import Item from '../models/item';
 import { orderExpiration } from './env';
 import { badRequest, unauthorized } from './responses';
 import log from './log';
+import { getIp } from './network';
 
 export const getOrder = async (id: string) => {
   const order = await Order.findByPk(id, {
@@ -108,6 +109,7 @@ export const createOrder = async (req: BodyRequest<Order>, res: Response, items:
       transactionState,
       paidAt,
       forcePay,
+      ip: getIp(req),
       users: req.body.users.map((user) => ({
         firstname: user.firstname,
         lastname: user.lastname,

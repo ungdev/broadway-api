@@ -55,6 +55,9 @@ export default class Order extends Model<Order> {
   @Column
   public email: string;
 
+  @Column
+  public ip: string;
+
   @HasMany(() => User)
   public users: User[];
 
