@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { fn } from 'sequelize';
-import errorHandler from '../../utils/errorHandler';
 import { successUrl, errorUrl } from '../../utils/env';
 import { sendConfirmationEmail } from '../../mail';
 import { getOrderWithUsersAndItems } from '../../utils/orders';
+import log from '../../utils/log';
 
 export const etupayCallback = (req: Request, res: Response) => {
   res
@@ -60,12 +60,12 @@ export const successfulPayment = async (req: Request, res: Response) => {
     order.paidAt = (fn('NOW') as unknown) as Date;
     await order.save();
 
-    res.redirect(successUrl());
+    // No need to await because we don't want the client to wait
+    sendConfirmationEmail(order);
 
-    await sendConfirmationEmail(order);
-
-    return res.end();
+    return res.redirect(successUrl());
   } catch (err) {
-    return errorHandler(res, err);
+    log.error(err);
+    return res.end();
   }
 };

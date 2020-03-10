@@ -10,8 +10,18 @@ import User from '../models/user';
 import { identifyRepresentation } from '../utils/representation';
 import { mailUrl, mailSender, mailPort, mailPassword, mailUser } from '../utils/env';
 import Order from '../models/order';
+import log from '../utils/log';
 
 const template = readFileSync(join(__dirname, 'template.html')).toString();
+
+const transporter = nodemailer.createTransport({
+  host: mailUrl(),
+  port: mailPort(),
+  auth: {
+    user: mailUser(),
+    pass: mailPassword(),
+  },
+});
 
 export const generateQrCode = async (id: string) => {
   return qrcode.toDataURL(id, { margin: 1 });
@@ -67,23 +77,16 @@ const generateAttachments = async (order: Order) =>
   );
 
 export const sendConfirmationEmail = async (order: Order) => {
-  const transporter = nodemailer.createTransport({
-    host: mailUrl(),
-    port: mailPort(),
-    auth: {
-      user: mailUser(),
-      pass: mailPassword(),
-    },
-  });
-
   const html = generateHtml(order.firstname, order.lastname);
   const attachments = await generateAttachments(order);
 
-  return transporter.sendMail({
+  await transporter.sendMail({
     from: mailSender(),
     to: order.email,
     subject: 'Confirmation de votre commande',
     html,
     attachments,
   });
+
+  log.info(`Mail sent to <${order.email}>`);
 };

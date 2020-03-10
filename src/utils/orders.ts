@@ -77,6 +77,7 @@ export const deleteExpiredOrders = async () => {
   });
 };
 
+// Creates an order and returns it with its users
 export const createOrder = async (req: BodyRequest<Order>, res: Response, items: Array<Item>, forcePay = false) => {
   if (req.body.users.length === 0) {
     log.warn('Invalid form: users length is 0');
