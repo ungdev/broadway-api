@@ -8,7 +8,7 @@ import PDFDocument from 'pdfkit';
 import { join } from 'path';
 import User from '../models/user';
 import { identifyRepresentation } from '../utils/representation';
-import { mailUrl, mailSender, mailPort, mailPassword, mailUser } from '../utils/env';
+import { mailHost, mailPort, mailSender, mailPassword, mailUser } from '../utils/env';
 import Order from '../models/order';
 import log from '../utils/log';
 
@@ -27,6 +27,7 @@ export const generateQrCode = async (id: string) => {
   return qrcode.toDataURL(id, { margin: 1 });
 };
 
+// TODO: ticket background
 // const background = `data:image/jpg;base64,${readFileSync(join(__dirname, 'ticket.jpg'), 'base64')}`;
 const width = 595.28;
 const height = 841.89;
@@ -59,6 +60,7 @@ export const generateTicket = async (user: User, representation: number) =>
 const generateHtml = (firstname: string, lastname: string) =>
   mustache.render(template, {
     title: 'Confirmation de votre commande',
+    // TODO: mail content
     content: `Merci d'avoir commandé chez nous ${firstname} ${lastname}, blablablablablabla`,
   });
 
@@ -70,7 +72,7 @@ const generateAttachments = async (order: Order) =>
       const pdf = await generateTicket(user, order.representation);
 
       return {
-        filename: `${user.firstname}.pdf`,
+        filename: `${user.firstname}_${user.lastname}.pdf`,
         content: pdf,
       };
     }),
@@ -83,7 +85,7 @@ export const sendConfirmationEmail = async (order: Order) => {
   await transporter.sendMail({
     from: mailSender(),
     to: order.email,
-    subject: 'Confirmation de votre commande',
+    subject: 'Broadway UTT - Confirmation de votre commande',
     html,
     attachments,
   });

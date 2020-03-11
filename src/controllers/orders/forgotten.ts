@@ -16,9 +16,9 @@ export default async (req: Request, res: Response) => {
   }
 
   // The loop isn't async so that the client doesn't have to wait
-
   orders.forEach((order) => {
     sendConfirmationEmail(order);
   });
+
   return noContent(res);
 };
