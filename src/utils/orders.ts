@@ -25,6 +25,16 @@ export const getAllOrders = async () => {
   return orders;
 };
 
+export const getAllPaidOrders = async () => {
+  const paidOrders = await Order.findAll({
+    where: {
+      transactionState: 'paid',
+    },
+  });
+
+  return paidOrders;
+};
+
 export const getOrderWithUsers = async (id: string) => {
   const order = await Order.findByPk(id, {
     include: [User],

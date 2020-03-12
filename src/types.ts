@@ -14,6 +14,11 @@ export interface Token {
   permissions: Permissions;
 }
 
+export interface EmailAttachment {
+  filename: string;
+  content: Buffer;
+}
+
 export enum Error {
   // 400
   BAD_REQUEST = 'Requête invalide',

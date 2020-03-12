@@ -11,6 +11,7 @@ import { identifyRepresentation } from '../utils/representation';
 import { mailHost, mailPort, mailSender, mailPassword, mailUser } from '../utils/env';
 import Order from '../models/order';
 import log from '../utils/log';
+import { EmailAttachment } from '../types';
 
 const template = readFileSync(join(__dirname, 'template.html')).toString();
 
@@ -57,15 +58,8 @@ export const generateTicket = async (user: User, representation: number) =>
     doc.end();
   });
 
-const generateHtml = (firstname: string, lastname: string) =>
-  mustache.render(template, {
-    title: 'Confirmation de votre commande',
-    // TODO: mail content
-    content: `Merci d'avoir commandé chez nous ${firstname} ${lastname}, blablablablablabla`,
-  });
-
 const generateAttachments = async (order: Order) =>
-  Promise.all(
+  Promise.all<EmailAttachment>(
     order.users.map(async (_user) => {
       const user = _user;
 
@@ -78,17 +72,35 @@ const generateAttachments = async (order: Order) =>
     }),
   );
 
-export const sendConfirmationEmail = async (order: Order) => {
-  const html = generateHtml(order.firstname, order.lastname);
-  const attachments = await generateAttachments(order);
-
+export const sendEmail = async (
+  to: string,
+  text: {
+    title: string;
+    content: string;
+  },
+  attachments?: EmailAttachment[],
+) => {
   await transporter.sendMail({
     from: mailSender(),
-    to: order.email,
-    subject: 'Broadway UTT - Confirmation de votre commande',
-    html,
+    to,
+    subject: `Broadway UTT - ${text.title}`,
+    html: mustache.render(template, text),
     attachments,
   });
+};
+
+export const sendConfirmationEmail = async (order: Order) => {
+  const attachments = await generateAttachments(order);
+
+  await sendEmail(
+    order.email,
+    {
+      title: 'Confirmation de votre commande',
+      // TODO: mail content
+      content: `Merci d'avoir commandé chez nous ${order.firstname} ${order.lastname} ! blablabla`,
+    },
+    attachments,
+  );
 
   log.info(`Mail sent to <${order.email}>`);
 };
