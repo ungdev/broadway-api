@@ -15,7 +15,7 @@ import log from '../utils/log';
 const template = readFileSync(join(__dirname, 'template.html')).toString();
 
 const transporter = nodemailer.createTransport({
-  host: mailUrl(),
+  host: mailHost(),
   port: mailPort(),
   auth: {
     user: mailUser(),
