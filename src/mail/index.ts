@@ -6,13 +6,17 @@ import nodemailer from 'nodemailer';
 import mustache from 'mustache';
 import PDFDocument from 'pdfkit';
 import { join } from 'path';
-import User from '../models/user';
 import { identifyRepresentation } from '../utils/representation';
 import { mailHost, mailPort, mailSender, mailPassword, mailUser } from '../utils/env';
 import Order from '../models/order';
 import log from '../utils/log';
 import { EmailAttachment } from '../types';
 
+const qrcodeWidth = 150;
+const width = 595.28;
+const height = 841.89;
+// TODO: ticket background
+// const background = `data:image/jpg;base64,${readFileSync(join(__dirname, 'ticket.jpg'), 'base64')}`;
 const template = readFileSync(join(__dirname, 'template.html')).toString();
 
 const transporter = nodemailer.createTransport({
@@ -25,29 +29,26 @@ const transporter = nodemailer.createTransport({
 });
 
 export const generateQrCode = async (id: string) => {
-  return qrcode.toDataURL(id, { margin: 1 });
+  return qrcode.toDataURL(id, { margin: 1, width: qrcodeWidth });
 };
 
-// TODO: ticket background
-// const background = `data:image/jpg;base64,${readFileSync(join(__dirname, 'ticket.jpg'), 'base64')}`;
-const width = 595.28;
-const height = 841.89;
-
-export const generateTicket = async (user: User, representation: number) =>
+export const generateTicket = async (order: Order) =>
   new Promise<Buffer>(async (resolve) => {
     const doc = new PDFDocument({ size: [width, height] });
-    const qrcode = await generateQrCode(user.id);
+    const qrcode = await generateQrCode(order.id);
     const buffers: Array<Uint8Array> = [];
 
     // doc.image(background, 0, 0, { width, height });
-    doc.image(qrcode, width - 75 - 20, 20, { width: 75 });
+    doc.image(qrcode, width - qrcodeWidth - 20, 20, { width: qrcodeWidth });
     doc
       .font(join(__dirname, 'roboto.ttf'))
-      .fontSize(20)
+      .fontSize(16)
       .fillColor('black')
-      .text(`${user.firstname} ${user.lastname}`, 20, 20)
-      .text(identifyRepresentation(representation), 20, 40)
-      .text(user.item.name, 20, 60);
+      .text(`Date : ${identifyRepresentation(order.representation)}`, 20, 20);
+
+    order.users.forEach((user, i) => {
+      doc.text(`${user.firstname} ${user.lastname} (${user.item.name})`, 20, 50 + i * 20);
+    });
 
     // Return result
     doc.on('data', buffers.push.bind(buffers));
@@ -57,20 +58,6 @@ export const generateTicket = async (user: User, representation: number) =>
 
     doc.end();
   });
-
-const generateAttachments = async (order: Order) =>
-  Promise.all<EmailAttachment>(
-    order.users.map(async (_user) => {
-      const user = _user;
-
-      const pdf = await generateTicket(user, order.representation);
-
-      return {
-        filename: `${user.firstname}_${user.lastname}.pdf`,
-        content: pdf,
-      };
-    }),
-  );
 
 export const sendEmail = async (
   to: string,
@@ -90,14 +77,19 @@ export const sendEmail = async (
 };
 
 export const sendConfirmationEmail = async (order: Order) => {
-  const attachments = await generateAttachments(order);
+  const attachments = [
+    {
+      filename: `Billet_Broadway_UTT.pdf`,
+      content: await generateTicket(order),
+    },
+  ];
 
   await sendEmail(
     order.email,
     {
       title: 'Confirmation de votre commande',
       // TODO: mail content
-      content: `Merci d'avoir commandé chez nous ${order.firstname} ${order.lastname} ! blablabla`,
+      content: `Merci d'avoir commandé chez nous ${order.firstname} ${order.lastname} !<br />Vous trouverez votre billet en pièce jointe.`,
     },
     attachments,
   );
