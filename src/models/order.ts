@@ -8,11 +8,9 @@ import {
   HasMany,
   BeforeCreate,
   Default,
-  DataType,
 } from 'sequelize-typescript';
-import shortid from 'shortid';
-import { Representation } from '../types';
 import User from './user';
+import nanoid from '../utils/nanoid';
 
 @Table({
   tableName: 'orders',
@@ -25,8 +23,8 @@ export default class Order extends Model<Order> {
   id: string;
 
   @AllowNull(false)
-  @Column(DataType.ENUM('friday', 'saturday'))
-  public representation: Representation;
+  @Column
+  public representation: number;
 
   @AllowNull(false)
   @Column
@@ -36,26 +34,38 @@ export default class Order extends Model<Order> {
   @Column
   public lastname: string;
 
+  @AllowNull(true)
+  @Column
+  public transactionId: number;
+
   @AllowNull(false)
   @Default('draft')
   @Column
   public transactionState: string;
 
   @Column
-  public paidAt: string;
+  public paidAt: Date;
+
+  @AllowNull(false)
+  @Default(false)
+  @Column
+  public forcePay: boolean;
 
   @AllowNull(false)
   @Column
   public email: string;
 
+  @Column
+  public ip: string;
+
   @HasMany(() => User)
   public users: User[];
 
   @BeforeCreate
-  static addId(instance: Order) {
+  static async addId(instance: Order) {
     if (!instance.id) {
       // eslint-disable-next-line no-param-reassign
-      instance.id = shortid.generate();
+      instance.id = await nanoid();
     }
   }
 }

@@ -1,36 +1,27 @@
-import { Request, Response } from 'express';
 import User from '../models/user';
 import { maxPlaces } from './env';
-import { Representation, Error } from '../types';
 import Order from '../models/order';
-import log from './log';
-import { badRequest, unauthorized } from './responses';
 
-export const checkIfFull = async (req: Request, res: Response, representation: Representation, places = 0) => {
-  const count = await User.count({
-    include: [
-      {
-        model: Order,
-        attributes: [],
-        where: {
-          representation,
-        },
-      },
-    ],
-  });
+export const getUser = async (id: string) => {
+  const user = await User.findByPk(id);
 
-  if (count + places > maxPlaces()) {
-    return unauthorized(res, Error.REPRESENTATION_FULL);
-  }
-
-  return true;
+  return user;
 };
 
-export const checkUsersLength = (req: Request, res: Response) => {
-  if (req.body.users.length === 0) {
-    log.warn('Invalid form: users length is 0');
-    return badRequest(res, Error.INVALID_FORM);
-  }
+export const isFull = async (representation: number, places = 0) => {
+  const orders = await Order.findAll({
+    include: [User],
+    where: {
+      representation,
+    },
+  });
 
-  return true;
+  const count = orders.reduce((acc, curr) => {
+    return acc + curr.users.length;
+  }, 0);
+
+  if (count + places > maxPlaces()) {
+    return true;
+  }
+  return false;
 };

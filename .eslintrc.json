@@ -17,6 +17,8 @@
     "sourceType": "module"
   },
   "rules": {
+    "prettier/prettier": "error",
+    "no-async-promise-executor": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-explicit-any": "error",
     "eol-last": "off",
@@ -24,6 +26,7 @@
     "no-alert": "error",
     "object-curly-newline": "off",
     "import/default": "off",
+    "import/extensions": "off",
     "import/no-cycle": "off",
     "radix": "off",
     "import/prefer-default-export": "off",

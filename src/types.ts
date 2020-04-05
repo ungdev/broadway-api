@@ -5,51 +5,66 @@ import { Request } from 'express';
  */
 // General
 
-export enum Permission {
+export enum Permissions {
   Admin = 'admin',
   Orga = 'orga',
 }
 
 export interface Token {
-  name: string;
-  key: string;
-  permission: Permission;
+  permissions: Permissions;
 }
 
-export enum Representation {
-  Friday = 'friday',
-  Saturday = 'saturday',
+export interface EmailAttachment {
+  filename: string;
+  content: Buffer;
 }
 
 export enum Error {
   // 400
-  BAD_REQUEST = 'BAD_REQUEST',
+  BAD_REQUEST = 'Requête invalide',
 
   // 401
-  UNAUTHENTICATED = 'UNAUTHENTICATED',
-  EXPIRED_TOKEN = 'EXPIRED_TOKEN',
-  INVALID_TOKEN = 'INVALID_TOKEN',
-  INVALID_PIN = 'INVALID_PIN',
+  UNAUTHENTICATED = "Vous n'êtes pas authentifié",
+  EXPIRED_TOKEN = 'Session expirée. Veuillez vous reconnecter',
+  INVALID_TOKEN = 'Session invalide',
+  INVALID_PASSWORD = 'Mot de passe invalide',
   INVALID_FORM = 'Formulaire invalide',
 
   // 403
-  UNAUTHORIZED = 'UNAUTHORIZED',
+  UNAUTHORIZED = "Vous n'avez pas l'autorisation d'accéder à cette ressource",
   REPRESENTATION_FULL = 'La représentation sélectionnée est complète',
+  USER_ALREADY_SCANNED = "L'utilisateur a déjà scanné son billet",
+  NOT_PAID = "Le billet n'a pas été payé",
+  PAYMENT_DISABLED = "L'achat de billets est désactivé",
 
   // 404
-  NOT_FOUND = 'NOT_FOUND',
+  NOT_FOUND = 'La ressource est introuvable',
+  ROUTE_NOT_FOUND = 'La route est introuvable',
+  USER_NOT_FOUND = "L'utilisateur est introuvable",
+  ORDER_NOT_FOUND = 'La commande est introuvable',
+
+  // 406
+  NOT_ACCEPTABLE = 'Contenu envoyé inacceptable',
 
   // 500
-  UNKNOWN = 'UNKNOWN',
+  UNKNOWN = 'Erreur inconnue',
 }
 
 // Express method merging
 declare module 'express' {
   interface Request {
-    user?: Token;
+    permissions?: Permissions;
+    etupay?: EtupayResponse;
   }
 }
 
 export interface BodyRequest<T> extends Request {
   body: T;
+}
+
+export interface EtupayResponse {
+  transactionId: number;
+  step: string;
+  paid: boolean;
+  serviceData: string;
 }

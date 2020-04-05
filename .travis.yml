@@ -13,9 +13,11 @@ cache: yarn
 script:
   - yarn
   - yarn lint
+  - yarn build
 
 notifications:
-  slack: uttnetgroup:dub9msi1fvNcpb1M5Wnmpuxo
+  slack:
+    secure: YHnHrTbOpWrfyhLAp5n9KK3SrRMGh9DpgWjhFNfyZ1nItxdpJ81I+lPm7eB+xvogi42HFGupRuk0ACVOdgPSIaiD+2yqU8F1mbs6fV1v8Uxlan9KNK2jcU/1gHTH5kt1a1qdsRkMD0aX6QjMMBWG0pAUscBW6JKQqSogMkDH9pkqTYERoBRjp6/7uplAyWGGfm490sraQQQZkdQWk7kuQn/PC/AdhCTUXvMwuJvnT35vT0pu47FvTDKGZOUV6f+ZKo3MLzRo48uW/SyiiSrOpSt4cGI8tQsqmy+LbnbvIx7jJybmt9yRMkUwn6Pc/La7VhG17Ed++azM9mOlzo1w0VbWFmWAprQ+Easp4vjP12IGOr8dIhCwdBzOQ45t2renLDl9wllFFCNsfzyLVUFGD2m3EzrnOUupb1h6CjEYpiDJNJ1erb4xBQ2tn8q2TvuONKTvIgRak2/jpqHvHkVtWxgq1UDPcHnfmkKLPHYLXZdtwHhLImEI8iSoejQno3MI/5RQ2dnyb0p5nw6Bm0MrcN4DA1Zb1UBR+Fn5ZxQ1xotGjjaAC+rZJWosht/rHO5lebMPRd8QorUlkDllo1Km/zBpnzmgpeb1XpxV1taF9aIQVDVyMbGLEnCp/P5v8MkxOJhCf7yr6ej3Na/7IJOqlIcET09bTTWyL3sfn52HPmQ=
 
 deploy:
   - provider: openshift
